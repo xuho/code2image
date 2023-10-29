@@ -37,6 +37,7 @@ function App() {
         <Resizable
           enable={{ left: true, right: true }}
           minWidth={padding * 2 + 400}
+          maxWidth={window.innerWidth - 600}
           size={{ width }}
           onResize={(e, dir, ref) => setWidth(ref.offsetWidth)}
           onResizeStart={() => setShowWidth(true)}
