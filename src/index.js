@@ -1,13 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { NextUIProvider } from "@nextui-org/react";
+import { ToastContainer } from 'react-toastify';
 import './index.css';
+import 'react-toastify/dist/ReactToastify.min.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <NextUIProvider>
+      <App />
+      <ToastContainer />
+    </NextUIProvider>
   </React.StrictMode>
 );
 

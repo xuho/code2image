@@ -1,8 +1,8 @@
 export const languages = {
     bash: "Bash",
     c: "C",
-    cpp: "C++",
-    csharp: "C#",
+    "c++": "C++",
+    "c#": "C#",
     clojure: "Clojure",
     crystal: "Crystal",
     css: "CSS",

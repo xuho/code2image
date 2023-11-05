@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Code2Image",
+  "name": "Convert your source code to image",
   "icons": [
     {
       "src": "favicon.ico",

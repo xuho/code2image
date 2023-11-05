@@ -19,4 +19,4 @@ const useStore = create(
         }
     )
 )
-export default useStore
+export default useStore;

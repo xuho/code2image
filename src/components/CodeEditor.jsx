@@ -24,12 +24,17 @@ export default function CodeEditor() {
 
   useEffect(() => {
     if (store.autoDetectLanguage) {
+      // TODO: check and handle if language is (c++, c#)
       const { language } = flourite(store.code, { noUnknown: true });
       useStore.setState({
         language: language.toLowerCase() || "plaintext",
       });
     }
-  }, [store.autoDetectLanguage, store.code])
+  }, [store.autoDetectLanguage, store.code]);
+
+  const onChangeTitle = (e) => {
+    useStore.setState({ title: e.target.value });
+  }
 
   return (
     <div
@@ -50,7 +55,7 @@ export default function CodeEditor() {
           <input
             type="text"
             value={store.title}
-            onChange={(e) => { }}
+            onChange={onChangeTitle}
             spellCheck={false}
             onClick={(e) => e.target.select()}
             className="bg-transparent text-center text-gray-400 text-sm font-medium focus:outline-none"

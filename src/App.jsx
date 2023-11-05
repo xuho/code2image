@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import './App.css';
 import './index.css';
 import CodeEditor from './components/CodeEditor';
 import useStore from './store';
@@ -7,6 +6,9 @@ import { themes } from './configs/theme';
 import { fonts } from './configs/font';
 import { mergeClassNames } from './utils/mergeClassName';
 import { Resizable } from "re-resizable";
+import ToolBar from './components/ToolBar';
+import WidthMeasurement from './components/WidthMeasurement';
+import { Button } from '@nextui-org/react';
 
 function App() {
   const [width, setWidth] = useState("auto");
@@ -22,7 +24,7 @@ function App() {
   }, []);
 
   return (
-    <main className="dark min-h-screen flex justify-center items-center bg-neutral-950 text-white">
+    <main className="w-full p-4 min-h-screen items-center dark text-foreground bg-background">
       <link
         rel="stylesheet"
         href={themes[theme].theme}
@@ -33,27 +35,43 @@ function App() {
         href={fonts[fontStyle].src}
         crossOrigin="anonymous"
       />
-      <div className="App">
-        <Resizable
-          enable={{ left: true, right: true }}
-          minWidth={padding * 2 + 400}
-          maxWidth={window.innerWidth - 600}
-          size={{ width }}
-          onResize={(e, dir, ref) => setWidth(ref.offsetWidth)}
-          onResizeStart={() => setShowWidth(true)}
-          onResizeStop={() => setShowWidth(false)}
-        >
-          <div
-            className={mergeClassNames(
-              "overflow-hidden mb-2 transition-all ease-out",
-              showBackground ? themes[theme].background : "ring ring-neutral-900"
-            )}
-            style={{ padding }}
-            ref={editorRef}
+      <div className='container flex-column'>
+        <ToolBar />
+        <div className="w-full justify-center flex">
+          <Resizable
+            enable={{ left: true, right: true }}
+            minWidth={padding * 2 + 500}
+            maxWidth={'100%'}
+            size={{ width }}
+            onResize={(e, dir, ref) => setWidth(ref.offsetWidth)}
+            onResizeStart={() => setShowWidth(true)}
+            onResizeStop={() => setShowWidth(false)}
           >
-            <CodeEditor />
-          </div>
-        </Resizable>
+            <div
+              className={mergeClassNames(
+                "overflow-hidden mb-2 transition-all ease-out",
+                showBackground ? themes[theme].background : "ring ring-neutral-900"
+              )}
+              style={{ padding }}
+              ref={editorRef}
+            >
+              <CodeEditor />
+            </div>
+            <WidthMeasurement showWidth={showWidth} width={width} />
+            <div
+              className={mergeClassNames(
+                "transition-opacity w-fit mx-auto -mt-4",
+                showWidth || width === "auto"
+                  ? "invisible opacity-0"
+                  : "visible opacity-100"
+              )}
+            >
+              <Button size="sm" onClick={() => setWidth("auto")} variant="ghost">
+                Reset width
+              </Button>
+            </div>
+          </Resizable>
+        </div>
       </div>
     </main>
   );
