@@ -171,7 +171,7 @@ const ToolBar = () => {
                 </div>
 
                 <div className="max-w-md gap-3 py-2 w-2/5 px-3 py-2">
-                    <Dropdown>
+                    <Dropdown backdrop="blur">
                         <DropdownTrigger>
                             <Button
                                 startContent={<ShareIcon />}
