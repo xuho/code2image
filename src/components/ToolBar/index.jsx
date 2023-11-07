@@ -1,5 +1,5 @@
-import React from "react";
-import { Input, Select, SelectItem, Slider, Switch, Popover, PopoverTrigger, PopoverContent, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
+import React, { useRef } from "react";
+import { Input, Select, SelectItem, Slider, Switch, Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/react";
 import { themes } from "../../configs/theme";
 import { fonts } from "../../configs/font";
 import { languages } from "../../configs/language";
@@ -13,12 +13,15 @@ import { SaveAsSVGIcon } from "../SVGIcons/SaveAsSVG";
 import { ThemeIconPlaceholder } from "../ThemeIconPlaceholder";
 import { CopyToClipboardIcon } from "../SVGIcons/CopyToClipboard";
 import { toast } from "react-toastify";
+import { toPng, toSvg, toBlob } from 'html-to-image';
 
 const inputClasses = "flex items-center justify-between rounded-md bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 w-1/4";
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
-const ToolBar = () => {
+const ToolBar = ({
+    codeEditorRef
+}) => {
     const theme = useStore((state) => state.theme);
     const language = useStore((state) => state.language);
     const font = useStore((state) => state.fontStyle);
@@ -26,46 +29,99 @@ const ToolBar = () => {
     const padding = useStore((state) => state.padding);
     const darkMode = useStore((state) => state.darkMode);
 
-    const [isOpenMenu, setIsOpenMenu] = React.useState(false);
-
     const handleThemeChange = (e) => {
-        console.log('theme', e.target.value);
         if (!!e.target.value) {
             useStore.setState({ theme: e.target.value });
         }
     }
 
     const handleLanguageChange = (e) => {
-        console.log('language', e.target.value);
         if (!!e.target.value) {
             useStore.setState({ language: e.target.value });
         }
     }
 
     const handleFontChange = (e) => {
-        console.log('font', e.target.value);
         if (!!e.target.value) {
             useStore.setState({ fontStyle: e.target.value });
         }
     }
 
     const handleFontSizeChange = (e) => {
-        console.log('font size', e.target.value);
         if (!!e.target.value) {
             useStore.setState({ fontSize: Number(e.target.value) });
         }
     }
 
     const handlePaddingChange = (newPadding) => {
-        console.log('padding', newPadding);
         if (!!newPadding) {
             useStore.setState({ padding: newPadding });
         }
     }
 
     const handleDarkModeChange = (darkMode) => {
-        console.log('dark mode', darkMode);
         useStore.setState({ darkMode });
+    }
+
+    const showMessage = (message) => {
+        toast(message, {
+            autoClose: 2000,
+            position: "bottom-center"
+        });
+    }
+
+    const saveImageAs = (type) => async () => {
+        const saveImageFunction = {
+            'png': toPng,
+            'svg': toSvg,
+        }[type];
+        try {
+            const image = await saveImageFunction(codeEditorRef.current);
+            const link = document.createElement('a');
+            link.download = `code.${type}`;
+            link.href = image;
+            link.click();
+            showMessage(`Saved as ${type.toUpperCase()}!`);
+        } catch (error) {
+            toast.error("Something went wrong!");
+        }
+    }
+
+    const saveImageAsPNG = async () => {
+        try {
+            const pngImage = await toPng(codeEditorRef.current);
+            const link = document.createElement('a');
+            link.download = 'code.png';
+            link.href = pngImage;
+            link.click();
+            showMessage("Saved as PNG!");
+        } catch (error) {
+            toast.error("Something went wrong!");
+        }
+    }
+
+    const saveImageAsSVG = async () => {
+        try {
+            const svgImage = await toSvg(codeEditorRef.current);
+            const link = document.createElement('a');
+            link.href = svgImage;
+            link.download = 'code.svg';
+            link.click();
+            showMessage("Saved as SVG!");
+        } catch (error) {
+            toast.error("Something went wrong!");
+        }
+    }
+
+    const copyToClipboard = async () => {
+        try {
+            const imgBlob = await toBlob(codeEditorRef.current);
+            const img = new ClipboardItem({ "image/png": imgBlob })
+            navigator.clipboard.write([img])
+            showMessage("Copied to clipboard!");
+        } catch (error) {
+            toast.error("Something went wrong!")
+        }
     }
 
     return (
@@ -183,22 +239,22 @@ const ToolBar = () => {
                         <DropdownMenu variant="faded" aria-label="Dropdown menu with icons">
                             <DropdownItem
                                 key="saveAsPNG"
-                                shortcut="⌘S"
                                 startContent={<SaveAsPNGIcon className={iconClasses} />}
+                                onPress={saveImageAs('png')}
                             >
                                 Save as PNG
                             </DropdownItem>
                             <DropdownItem
                                 key="saveAsSVG"
-                                shortcut="⌘⇧S"
                                 startContent={<SaveAsSVGIcon className={iconClasses} />}
+                                onPress={saveImageAs('svg')}
                             >
                                 Save as SVG
                             </DropdownItem>
                             <DropdownItem
                                 key="copyToClipboard"
-                                shortcut="⌘C"
                                 startContent={<CopyToClipboardIcon className={iconClasses} />}
+                                onPress={copyToClipboard}
                             >
                                 Copy to clipboard
                             </DropdownItem>

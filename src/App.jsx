@@ -36,8 +36,8 @@ function App() {
         crossOrigin="anonymous"
       />
       <div className='container flex-column'>
-        <ToolBar />
-        <div className="w-full justify-center flex">
+        <ToolBar codeEditorRef={editorRef}/>
+        <div className="w-full justify-center flex" id='code-editor'>
           <Resizable
             enable={{ left: true, right: true }}
             minWidth={padding * 2 + 500}
