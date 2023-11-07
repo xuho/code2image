@@ -66,7 +66,16 @@ const ToolBar = ({
     const showMessage = (message) => {
         toast(message, {
             autoClose: 2000,
-            position: "bottom-center"
+            position: "bottom-center",
+            theme: "dark",
+        });
+    }
+
+    const showErrorMessage = (message) => {
+        toast.error(message, {
+            autoClose: 2000,
+            position: "bottom-center",
+            theme: "dark",
         });
     }
 
@@ -83,44 +92,18 @@ const ToolBar = ({
             link.click();
             showMessage(`Saved as ${type.toUpperCase()}!`);
         } catch (error) {
-            toast.error("Something went wrong!");
-        }
-    }
-
-    const saveImageAsPNG = async () => {
-        try {
-            const pngImage = await toPng(codeEditorRef.current);
-            const link = document.createElement('a');
-            link.download = 'code.png';
-            link.href = pngImage;
-            link.click();
-            showMessage("Saved as PNG!");
-        } catch (error) {
-            toast.error("Something went wrong!");
-        }
-    }
-
-    const saveImageAsSVG = async () => {
-        try {
-            const svgImage = await toSvg(codeEditorRef.current);
-            const link = document.createElement('a');
-            link.href = svgImage;
-            link.download = 'code.svg';
-            link.click();
-            showMessage("Saved as SVG!");
-        } catch (error) {
-            toast.error("Something went wrong!");
+            showErrorMessage('Something went wrong!');
         }
     }
 
     const copyToClipboard = async () => {
         try {
             const imgBlob = await toBlob(codeEditorRef.current);
-            const img = new ClipboardItem({ "image/png": imgBlob })
-            navigator.clipboard.write([img])
+            const img = new ClipboardItem({ "image/png": imgBlob });
+            navigator.clipboard.write([img]);
             showMessage("Copied to clipboard!");
         } catch (error) {
-            toast.error("Something went wrong!")
+            showErrorMessage('Something went wrong!');
         }
     }
 
