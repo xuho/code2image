@@ -9,6 +9,7 @@ import { Resizable } from "re-resizable";
 import ToolBar from './components/ToolBar';
 import WidthMeasurement from './components/WidthMeasurement';
 import { Button } from '@nextui-org/react';
+import { useCheckMobile } from './hooks/useCheckMobile';
 
 function App() {
   const [width, setWidth] = useState("auto");
@@ -18,6 +19,8 @@ function App() {
   const fontStyle = useStore((state) => state.fontStyle);
   const showBackground = useStore((state) => state.showBackground);
   const editorRef = useRef(null);
+
+  const isMobile = useCheckMobile();
 
   useEffect(() => {
     // TODO: handle convert code from base64 text from url
@@ -35,24 +38,37 @@ function App() {
         href={fonts[fontStyle].src}
         crossOrigin="anonymous"
       />
-      <div className='container flex-column'>
-        <ToolBar codeEditorRef={editorRef}/>
-        <div className="w-full justify-center flex" id='code-editor'>
+      <div className='md:container flex-column'>
+        <ToolBar codeEditorRef={editorRef} />
+        <div className="justify-center flex relative" id='code-editor'>
           <Resizable
             enable={{ left: true, right: true }}
-            minWidth={padding * 2 + 500}
             maxWidth={'100%'}
+            minWidth={isMobile ? "100%" : 600}
             size={{ width }}
             onResize={(e, dir, ref) => setWidth(ref.offsetWidth)}
             onResizeStart={() => setShowWidth(true)}
             onResizeStop={() => setShowWidth(false)}
           >
+            {
+              isMobile
+                ? null : (
+                  <>
+                    <div className="bg-slate-300 absolute w-[8px] h-[8px] rounded-[4px] top-[calc(50%-32px)] left-[-4px]">
+                    </div>
+                    <div className="bg-slate-300 absolute w-[8px] h-[8px] rounded-[4px] top-[calc(50%-32px)] right-[-4px]">
+                    </div>
+                  </>
+                )
+            }
             <div
               className={mergeClassNames(
                 "overflow-hidden mb-2 transition-all ease-out",
                 showBackground ? themes[theme].background : "ring ring-neutral-900"
               )}
-              style={{ padding }}
+              style={{
+                padding: isMobile ? 12 : padding,
+              }}
               ref={editorRef}
             >
               <CodeEditor />

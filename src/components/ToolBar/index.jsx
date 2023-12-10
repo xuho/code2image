@@ -14,8 +14,9 @@ import { ThemeIconPlaceholder } from "../ThemeIconPlaceholder";
 import { CopyToClipboardIcon } from "../SVGIcons/CopyToClipboard";
 import { toast } from "react-toastify";
 import { toPng, toSvg, toBlob } from 'html-to-image';
+import { useCheckMobile } from "../../hooks/useCheckMobile";
 
-const inputClasses = "flex items-center justify-between rounded-md bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 w-1/4";
+const inputClasses = "flex items-center justify-between rounded-md bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50 w-full md:w-1/4";
 
 const iconClasses = "text-xl text-default-500 pointer-events-none flex-shrink-0";
 
@@ -28,6 +29,8 @@ const ToolBar = ({
     const fontSize = useStore((state) => state.fontSize);
     const padding = useStore((state) => state.padding);
     const darkMode = useStore((state) => state.darkMode);
+
+    const isMobile = useCheckMobile();
 
     const handleThemeChange = (e) => {
         if (!!e.target.value) {
@@ -108,8 +111,8 @@ const ToolBar = ({
     }
 
     return (
-        <div className='w-full rounded-xl border text-card-foreground shadow bottom-16 py-6 px-8 bg-neutral-900/90 backdrop-blur mb-16 flex'>
-            <div className="flex w-3/5">
+        <div className='w-full rounded-xl border text-card-foreground shadow bottom-16 p-2 md:py-6 md:px-8 bg-neutral-900/90 backdrop-blur mb-16 block md:flex'>
+            <div className="block md:flex md:w-3/5">
                 <Select
                     label="Theme"
                     placeholder="Select theme"
@@ -177,21 +180,27 @@ const ToolBar = ({
                     className={inputClasses}
                 />
             </div>
-            <div className="flex w-2/5">
-                <Slider
-                    size="md"
-                    label="Padding"
-                    maxValue={128}
-                    minValue={16}
-                    step={1}
-                    hideValue
-                    defaultValue={padding}
-                    classNames={{
-                        base: "max-w-md gap-3 py-2 w-2/5 px-3 py-2",
-                    }}
-                    onChange={handlePaddingChange}
-                />
-                <div className="max-w-md gap-3 py-2 w-2/5 px-3 py-2 flex flex-col">
+            <div className="block md:flex md:w-2/5">
+                {
+                    isMobile
+                        ? null : (
+                            <Slider
+                                size="md"
+                                label="Padding"
+                                maxValue={128}
+                                minValue={16}
+                                step={1}
+                                hideValue
+                                defaultValue={padding}
+                                classNames={{
+                                    base: "max-w-md gap-3 py-2 w-2/5 px-3 py-2",
+                                }}
+                                onChange={handlePaddingChange}
+                            />
+                        )
+
+                }
+                <div className="max-w-md gap-3 w-2/5 px-3 py-2 flex flex-col">
                     <span className="text-small">Dark mode</span>
                     <Switch
                         isSelected={darkMode}
@@ -208,8 +217,7 @@ const ToolBar = ({
                     >
                     </Switch>
                 </div>
-
-                <div className="max-w-md gap-3 py-2 w-2/5 px-3 py-2">
+                <div className="max-w-md gap-3 py-2 w-2/5 px-3">
                     <Dropdown backdrop="blur">
                         <DropdownTrigger>
                             <Button

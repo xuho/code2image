@@ -9,7 +9,7 @@ import useStore from "../store"
 import { themes } from "../configs/theme"
 
 export default function CodeEditor() {
-  const store = useStore()
+  const store = useStore();
 
   useEffect(() => {
     const randomSnippet = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
@@ -39,10 +39,10 @@ export default function CodeEditor() {
   return (
     <div
       className={mergeClassNames(
-        "min-w-[400px] border-2 rounded-xl shadow-2xl",
+        "border-2 rounded-xl shadow-2xl",
         store.darkMode
           ? "bg-black/75 border-gray-600/40"
-          : "bg-white/75 border-gray-200/20"
+          : "bg-white/75 border-gray-200/20",
       )}
     >
       <header className="grid grid-cols-6 gap-3 items-center px-4 py-3">
